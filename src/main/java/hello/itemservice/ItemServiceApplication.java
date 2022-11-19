@@ -25,5 +25,4 @@ public class ItemServiceApplication {
     public TestDataInit testDataInit(ItemRepository itemRepository) {
         return new TestDataInit(itemRepository);
     }
-
 }

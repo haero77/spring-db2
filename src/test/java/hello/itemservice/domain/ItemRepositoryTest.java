@@ -8,16 +8,31 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Transactional
 @SpringBootTest
 class ItemRepositoryTest {
 
     @Autowired
     ItemRepository itemRepository;
+
+/*
+
+    @Autowired
+    PlatformTransactionManager transactionManager;
+    TransactionStatus status;
+
+    @BeforeEach
+    void beforeEach() {
+        status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+    }
+*/
 
     @AfterEach
     void afterEach() {
@@ -25,8 +40,13 @@ class ItemRepositoryTest {
         if (itemRepository instanceof MemoryItemRepository) {
             ((MemoryItemRepository) itemRepository).clearStore();
         }
+
+        // 트랜잭션 롤백
+//        transactionManager.rollback(status);
     }
 
+    @Commit
+    @Transactional
     @Test
     void save() {
         //given
@@ -39,6 +59,7 @@ class ItemRepositoryTest {
         Item findItem = itemRepository.findById(item.getId()).get();
         assertThat(findItem).isEqualTo(savedItem);
     }
+
 
     @Test
     void updateItem() {
